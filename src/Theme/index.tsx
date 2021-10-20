@@ -1,23 +1,23 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import colors from "@mui/material/colors";
+import { blueGrey, indigo } from "@mui/material/colors";
 
 import typography from "./typography";
 
 const theme = createTheme({
   palette: {
     background: {
-      default: colors.common.white,
-      paper: colors.common.white,
+      default: "#fff",
+      paper: "#fff",
     },
     primary: {
-      main: colors.indigo[500],
+      main: indigo[500],
     },
     secondary: {
-      main: colors.indigo[500],
+      main: indigo[500],
     },
     text: {
-      primary: colors.blueGrey[900],
-      secondary: colors.blueGrey[600],
+      primary: blueGrey[900],
+      secondary: blueGrey[600],
     },
   },
   typography,
