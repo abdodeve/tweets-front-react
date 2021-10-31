@@ -20,7 +20,6 @@ export default function AlignItemsList({
   inputName: string;
   keyword: string;
 }) {
-  console.log("data==>", data);
   return (
     <>
       <Stack direction="row" spacing={1}>

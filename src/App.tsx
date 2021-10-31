@@ -20,7 +20,7 @@ import SearchForm from "./Components/SearchForm";
 import Chart from "./Components/Chart";
 import tweet from "./Types/tweet";
 
-const ENDPOINT: string = "http://localhost:8080";
+const ENDPOINT: string = "https://tweets-back-node.herokuapp.com";
 const socket = io(ENDPOINT);
 
 function App() {
