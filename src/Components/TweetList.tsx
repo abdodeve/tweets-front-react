@@ -9,16 +9,18 @@ import Typography from "@mui/material/Typography";
 import Twitter from "@mui/icons-material/Twitter";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import { Stack } from "@mui/material";
+import tweet from "./../Types/tweet";
 
 export default function AlignItemsList({
   data,
   inputName,
   keyword,
 }: {
-  data: string[];
+  data: tweet[];
   inputName: string;
   keyword: string;
 }) {
+  console.log("data==>", data);
   return (
     <>
       <Stack direction="row" spacing={1}>
@@ -29,26 +31,34 @@ export default function AlignItemsList({
           {keyword}
         </Typography>
       </Stack>
-      <List
-        sx={{ width: "100%", maxWidth: "100%", bgcolor: "background.paper" }}
-        disablePadding
-      >
-        {data.map((value, index) => {
-          return (
-            <React.Fragment key={index}>
-              <ListItem>
-                <ListItemIcon>
-                  <Twitter style={{ fill: "#1DA1F2" }} />
-                </ListItemIcon>
-                <ListItemText
-                  secondary={<React.Fragment>{value}</React.Fragment>}
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-            </React.Fragment>
-          );
-        })}
-      </List>
+      {data.length === 0 ? (
+        <h1>No data</h1>
+      ) : (
+        <List
+          sx={{ width: "100%", maxWidth: "100%", bgcolor: "background.paper" }}
+          disablePadding
+        >
+          {data.map((value, index) => {
+            return (
+              <React.Fragment key={index}>
+                <ListItem>
+                  <ListItemIcon>
+                    <Twitter style={{ fill: "#1DA1F2" }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    secondary={
+                      <React.Fragment>
+                        {value ? value.text : "No text"}
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+                <Divider variant="inset" component="li" />
+              </React.Fragment>
+            );
+          })}
+        </List>
+      )}
     </>
   );
 }

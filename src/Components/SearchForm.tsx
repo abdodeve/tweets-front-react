@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -9,18 +9,24 @@ import ClearIcon from "@mui/icons-material/Clear";
 import Stack from "@mui/material/Stack";
 
 export default function BasicTextFields({
+  keyword1tRef,
+  keyword1,
+  keyword2,
   setKeyword1,
   setKeyword2,
   handleSearch,
   handleReset,
+  handleStop,
 }: {
-  setKeyword1: any;
-  setKeyword2: any;
-  handleSearch: any;
-  handleReset: any;
+  keyword1tRef: React.MutableRefObject<HTMLInputElement | undefined>;
+  setKeyword1: Dispatch<string>;
+  setKeyword2: Dispatch<string>;
+  handleSearch: Function;
+  handleReset: Function;
+  handleStop: Function;
+  keyword1: string;
+  keyword2: string;
 }) {
-  const [firstKeyword, setfirstKeyword] = useState("");
-  const [secondeKeyword, setSecondeKeyword] = useState("");
   return (
     <>
       <Box
@@ -35,9 +41,11 @@ export default function BasicTextFields({
           <TextField
             id="standard-basic"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setfirstKeyword(event.target.value);
               setKeyword1(event.target.value);
             }}
+            autoFocus
+            value={keyword1}
+            inputRef={keyword1tRef}
             label="Keyword 1"
             variant="standard"
             style={{ width: "50%" }}
@@ -45,9 +53,9 @@ export default function BasicTextFields({
           <TextField
             id="standard-basic"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setSecondeKeyword(event.target.value);
               setKeyword2(event.target.value);
             }}
+            value={keyword2}
             label="Keyword 2"
             variant="standard"
             style={{ width: "50%" }}
@@ -63,7 +71,7 @@ export default function BasicTextFields({
             variant="outlined"
             endIcon={<ClearIcon />}
             onClick={() => {
-              handleReset();
+              handleStop();
             }}
           >
             Stop
@@ -81,7 +89,7 @@ export default function BasicTextFields({
             variant="contained"
             endIcon={<SearchIcon />}
             onClick={() => {
-              handleSearch(firstKeyword, secondeKeyword);
+              handleSearch(keyword1, keyword2);
             }}
           >
             Go

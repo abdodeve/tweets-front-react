@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { io } from "socket.io-client";
@@ -17,15 +17,19 @@ import "@fontsource/roboto/700.css";
 
 import TweetList from "./Components/TweetList";
 import SearchForm from "./Components/SearchForm";
+import Chart from "./Components/Chart";
+import tweet from "./Types/tweet";
 
-const ENDPOINT: string = "http://localhost:8081";
+const ENDPOINT: string = "http://localhost:8080";
 const socket = io(ENDPOINT);
 
 function App() {
-  const [tweet1, setTweet1] = useState<string[]>(["abc", "efg"]);
-  const [tweet2, setTweet2] = useState<string[]>(["abc", "efg"]);
+  const defaultTweet = { text: "No data", retweet_count: 0 };
+  const [tweet1, setTweet1] = useState<tweet[]>([]);
+  const [tweet2, setTweet2] = useState<tweet[]>([]);
   const [keyword1, setKeyword1] = useState<string>("");
   const [keyword2, setKeyword2] = useState<string>("");
+  const keyword1tRef = useRef<HTMLInputElement>();
 
   useEffect(() => {
     var room = "twitter_search";
@@ -35,13 +39,11 @@ function App() {
     });
 
     socket.on("send_tweet_1", (data) => {
-      //  console.log(data);
       setTweet1((prev) => {
         return addTweet(prev, data);
       });
     });
     socket.on("send_tweet_2", (data) => {
-      // console.log("send_tweet_2==>", data);
       setTweet2((prev) => {
         return addTweet(prev, data);
       });
@@ -53,9 +55,9 @@ function App() {
     };
   }, []);
 
-  function addTweet(list: string[], newEl: string) {
+  function addTweet(list: tweet[], newEl: tweet) {
     const newList = [newEl, ...list];
-    newList.length = 5;
+    if (newList.length > 5) newList.length = 5;
     return newList;
   }
 
@@ -72,21 +74,33 @@ function App() {
                 my: 1,
                 mx: "auto",
                 p: 2,
-                // backgroundColor: "#ff0000",
               }}
-              // style={{ backgroundColor: "#000" }}
             >
               <SearchForm
+                keyword1tRef={keyword1tRef}
                 setKeyword1={setKeyword1}
                 setKeyword2={setKeyword2}
-                handleSearch={(firstKeyword: any, secondeKeyword: any) => {
-                  console.log("secondeKeyword", secondeKeyword);
+                keyword1={keyword1}
+                keyword2={keyword2}
+                handleSearch={(
+                  firstKeyword: string,
+                  secondeKeyword: string
+                ) => {
                   socket.emit("send_keywords", {
                     firstKeyword,
                     secondeKeyword,
                   });
                 }}
                 handleReset={() => {
+                  socket.emit("stop_search");
+                  setTweet1([]);
+                  setTweet2([]);
+                  setKeyword1("");
+                  setKeyword2("");
+                  keyword1tRef.current?.focus();
+                  console.log("keyword1tRef==>", keyword1tRef);
+                }}
+                handleStop={() => {
                   socket.emit("stop_search");
                 }}
               />
@@ -100,8 +114,13 @@ function App() {
           <Grid item xs={4}>
             <TweetList data={tweet2} inputName="Keyword 2" keyword={keyword2} />
           </Grid>
-          <Grid item xs={4}>
-            <h1>Chart</h1>
+          <Grid item xs={4} style={{ maxHeight: 400 }}>
+            <Chart
+              keyword1={keyword1}
+              keyword2={keyword2}
+              tweet1={tweet1}
+              tweet2={tweet2}
+            />
           </Grid>
         </Grid>
       </Box>
